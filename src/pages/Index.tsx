@@ -8,11 +8,10 @@ import { NoteEditor } from '@/components/NoteEditor';
 import { ImageViewer } from '@/components/ImageViewer';
 import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog';
 import { EmptyState } from '@/components/EmptyState';
-import { FirebaseSetupBanner } from '@/components/FirebaseSetupBanner';
 import { Loader2 } from 'lucide-react';
 
 const Index = () => {
-  const { notes, loading, addNote, updateNote, deleteNote, isFirebaseConfigured } = useNotes();
+  const { notes, loading, addNote, updateNote, deleteNote } = useNotes();
   
   const [searchQuery, setSearchQuery] = useState('');
   const [editorOpen, setEditorOpen] = useState(false);
@@ -62,7 +61,7 @@ const Index = () => {
 
   const handleConfirmDelete = async () => {
     if (deletingNote) {
-      await deleteNote(deletingNote.id, deletingNote.imageUrl);
+      await deleteNote(deletingNote.id);
       setDeletingNote(null);
     }
   };
@@ -83,8 +82,6 @@ const Index = () => {
       <Header onCreateNote={handleCreateNote} notesCount={notes.length} />
       
       <main className="container mx-auto px-4 py-6">
-        {!isFirebaseConfigured && <FirebaseSetupBanner />}
-        
         {notes.length > 0 ? (
           <>
             <div className="mb-6">
