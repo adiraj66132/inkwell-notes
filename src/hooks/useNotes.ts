@@ -17,7 +17,7 @@ export function useNotes() {
       return;
     }
 
-    const fetchNotes = async () => {
+    const loadNotes = async () => {
       const { data, error } = await supabase
         .from('notes')
         .select('*')
@@ -41,23 +41,7 @@ export function useNotes() {
       setLoading(false);
     };
 
-    fetchNotes();
-
-    // Subscribe to changes
-    const channel = supabase
-      .channel('notes-changes')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'notes', filter: `user_id=eq.${user.id}` },
-        () => {
-          fetchNotes();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    loadNotes();
   }, [user]);
 
   const uploadImage = async (file: File): Promise<string | null> => {
@@ -78,6 +62,31 @@ export function useNotes() {
     const { data } = supabase.storage.from('note-images').getPublicUrl(fileName);
     return data.publicUrl;
   };
+
+  const fetchNotes = useCallback(async () => {
+    if (!user) return;
+    
+    const { data, error } = await supabase
+      .from('notes')
+      .select('*')
+      .order('updated_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching notes:', error);
+      toast.error('Failed to load notes');
+    } else {
+      setNotes(
+        data.map((note) => ({
+          id: note.id,
+          title: note.title,
+          content: note.content || '',
+          imageUrl: note.image_url || undefined,
+          createdAt: new Date(note.created_at),
+          updatedAt: new Date(note.updated_at),
+        }))
+      );
+    }
+  }, [user]);
 
   const addNote = useCallback(
     async (input: NoteInput, imageFile?: File): Promise<Note | null> => {
@@ -104,6 +113,7 @@ export function useNotes() {
         if (error) throw error;
 
         toast.success('Note created');
+        await fetchNotes(); // Refresh the list
         return {
           id: data.id,
           title: data.title,
@@ -118,7 +128,7 @@ export function useNotes() {
         return null;
       }
     },
-    [user]
+    [user, fetchNotes]
   );
 
   const updateNote = useCallback(
