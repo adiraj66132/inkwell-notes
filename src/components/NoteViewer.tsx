@@ -31,10 +31,10 @@ export function NoteViewer({ note, open, onClose, onEdit, onImageClick }: NoteVi
       <DialogContent className="sm:max-w-2xl max-h-[90vh] flex flex-col p-0 gap-0">
         <DialogHeader className="p-6 pb-4 border-b border-border/50">
           <div className="flex items-center justify-between gap-4">
-            <DialogTitle className="text-xl font-semibold truncate pr-4">
+            <DialogTitle className="text-xl font-semibold truncate pr-12">
               {note.title || 'Untitled'}
             </DialogTitle>
-            <div className="flex gap-2 shrink-0">
+            <div className="flex gap-2 shrink-0 mr-6">
               <Button
                 variant="outline"
                 size="sm"
