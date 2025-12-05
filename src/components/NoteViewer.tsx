@@ -51,7 +51,7 @@ export function NoteViewer({ note, open, onClose, onEdit, onImageClick }: NoteVi
           </p>
         </DialogHeader>
 
-        <ScrollArea className="flex-1 max-h-[60vh]">
+        <ScrollArea className="flex-1 overflow-y-auto" style={{ maxHeight: 'calc(90vh - 120px)' }}>
           <div className="p-6 space-y-4">
             {note.imageUrl && (
               <div 
