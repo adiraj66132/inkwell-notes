@@ -7,12 +7,13 @@ import { cn } from '@/lib/utils';
 
 interface NoteCardProps {
   note: Note;
+  onView: (note: Note) => void;
   onEdit: (note: Note) => void;
   onDelete: (note: Note) => void;
   onImageClick?: (imageUrl: string) => void;
 }
 
-export function NoteCard({ note, onEdit, onDelete, onImageClick }: NoteCardProps) {
+export function NoteCard({ note, onView, onEdit, onDelete, onImageClick }: NoteCardProps) {
   const hasImage = Boolean(note.imageUrl);
 
   return (
@@ -21,7 +22,7 @@ export function NoteCard({ note, onEdit, onDelete, onImageClick }: NoteCardProps
         "group card-gradient border-border/50 hover:border-primary/30 transition-all duration-300",
         "hover:shadow-glow animate-scale-in cursor-pointer overflow-hidden"
       )}
-      onClick={() => onEdit(note)}
+      onClick={() => onView(note)}
     >
       {hasImage && note.imageUrl && (
         <div 
