@@ -5,6 +5,7 @@ import { Header } from '@/components/Header';
 import { SearchBar } from '@/components/SearchBar';
 import { NoteCard } from '@/components/NoteCard';
 import { NoteEditor } from '@/components/NoteEditor';
+import { NoteViewer } from '@/components/NoteViewer';
 import { ImageViewer } from '@/components/ImageViewer';
 import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog';
 import { EmptyState } from '@/components/EmptyState';
@@ -16,6 +17,7 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [editorOpen, setEditorOpen] = useState(false);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
+  const [viewingNote, setViewingNote] = useState<Note | null>(null);
   const [viewingImage, setViewingImage] = useState<string | null>(null);
   const [deletingNote, setDeletingNote] = useState<Note | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -37,7 +39,12 @@ const Index = () => {
     setEditorOpen(true);
   };
 
+  const handleViewNote = (note: Note) => {
+    setViewingNote(note);
+  };
+
   const handleEditNote = (note: Note) => {
+    setViewingNote(null);
     setEditingNote(note);
     setEditorOpen(true);
   };
@@ -94,6 +101,7 @@ const Index = () => {
                   <NoteCard
                     key={note.id}
                     note={note}
+                    onView={handleViewNote}
                     onEdit={handleEditNote}
                     onDelete={handleDeleteNote}
                     onImageClick={setViewingImage}
@@ -117,6 +125,14 @@ const Index = () => {
         onClose={() => setEditorOpen(false)}
         onSave={handleSaveNote}
         isLoading={isSaving}
+      />
+
+      <NoteViewer
+        note={viewingNote}
+        open={Boolean(viewingNote)}
+        onClose={() => setViewingNote(null)}
+        onEdit={handleEditNote}
+        onImageClick={setViewingImage}
       />
 
       <ImageViewer
